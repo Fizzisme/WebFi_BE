@@ -43,7 +43,16 @@ const login = async (c: Context<{}, any, { out: { json: ILogin } }>) => {
 };
 
 
+const getMembers = async (c : Context) => {
+
+
+const ok = 'Đã lấy đc'
+    return c.json(ok,200)
+};
+
+
 export const memberController = {
     register,
-    login
+    login,
+    getMembers
 };

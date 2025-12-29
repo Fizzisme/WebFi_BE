@@ -8,6 +8,7 @@ const memberRoute = new Hono();
 
 memberRoute.post('/register', zValidator('json', registerSchema), memberController.register);
 memberRoute.post('/login', zValidator('json', loginSchema), memberController.login);
+memberRoute.post('/google-login', memberController.googleLogin);
 memberRoute.get(
     '/me',
     jwt({

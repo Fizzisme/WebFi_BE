@@ -26,3 +26,11 @@ export const loginSchema = z.object({
 });
 
 export type ILogin = z.infer<typeof loginSchema>;
+
+export type IGoogleLogin = {
+    email: string;
+    name: string;
+    image: string;
+    provider: string;
+    providerId: string;
+};

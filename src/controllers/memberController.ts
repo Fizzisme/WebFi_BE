@@ -42,6 +42,33 @@ const login = async (c: Context<{}, any, { out: { json: ILogin } }>) => {
     },200)
 };
 
+const googleLogin = async (c: Context)=>{
+
+    const data = await c.req.json()
+    const memberLogged = await memberService.googleLogin(data)
+    const {accessToken, refreshToken} = memberLogged || {}
+
+    setCookie(c, 'access_token', accessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'Strict',
+        path: '/',
+        maxAge: 15 * 60,
+    })
+
+    setCookie(c, 'refresh_token', refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'Strict',
+        path: '/',
+        maxAge: 7 * 24 * 60 * 60,
+    })
+
+    return c.json( {
+        message: 'Login thành công',
+    },200)
+
+}
 
 const getMembers = async (c : Context) => {
 
@@ -54,5 +81,6 @@ const ok = 'Đã lấy đc'
 export const memberController = {
     register,
     login,
-    getMembers
+    getMembers,
+    googleLogin
 };

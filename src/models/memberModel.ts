@@ -120,11 +120,14 @@ const update = async (dataId: string,data: Partial<IMemberDocument>) => {
 
     return updatedUser;
 };
-
+const getMemberById = async (memberId: string) => {
+    return await MemberModel.findById(memberId);
+}
 export const memberModel = {
     MEMBER_ROLES,
     createNew,
     findOneByEmail,
     update,
+    getMemberById,
     MemberModel,
 };

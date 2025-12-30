@@ -15,7 +15,7 @@ memberRoute.get(
         secret: env.ACCESS_TOKEN_SECRET_SIGNATURE as string,
         cookie: 'access_token',
     }),
-    memberController.getMembers,
+    memberController.getMember,
 );
 
 export default memberRoute;

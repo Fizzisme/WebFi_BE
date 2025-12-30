@@ -203,8 +203,11 @@ const googleLogin = async (data : IGoogleLogin) => {
     }
 
 }
+
+
+
 export const memberService = {
     register,
     login,
-    googleLogin
+    googleLogin,
 };

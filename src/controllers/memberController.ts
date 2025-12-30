@@ -2,6 +2,7 @@ import type { Context } from 'hono';
 import type { IRegister, ILogin } from '../validations/memberValidation.ts';
 import { memberService } from '../services/memberService.ts';
 import { setCookie } from 'hono/cookie'
+import { memberModel } from '../models/memberModel.ts';
 
 
 const register = async (c: Context<{}, any, { out: { json: IRegister } }>) => {
@@ -70,17 +71,38 @@ const googleLogin = async (c: Context)=>{
 
 }
 
-const getMembers = async (c : Context) => {
+const getMember = async (c: Context) => {
+    const payload = c.get('jwtPayload')
+    const memberId = payload.id
 
+    const memberDoc = await memberModel.getMemberById(memberId)
+    if (!memberDoc) {
+        return c.json({ message: 'Member not found' }, 404)
+    }
 
-const ok = 'Đã lấy đc'
-    return c.json(ok,200)
-};
+    const member = memberDoc.toObject()
+        return c.json(
+            {
+                id: member._id,
+                username: member.username,
+                email: member.email,
+                profile: member.profile,
+                workHistory: member.workHistory,
+                dateJoined: member.createdAt.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                }),
+            },
+            200
+        )
+}
+
 
 
 export const memberController = {
     register,
     login,
-    getMembers,
+    getMember,
     googleLogin
 };

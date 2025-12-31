@@ -1,7 +1,7 @@
 import type { Context } from 'hono';
 import type { IRegister, ILogin } from '../validations/memberValidation.ts';
 import { memberService } from '../services/memberService.ts';
-import { setCookie } from 'hono/cookie'
+import { deleteCookie, setCookie } from 'hono/cookie';
 import { memberModel } from '../models/memberModel.ts';
 
 
@@ -98,11 +98,30 @@ const getMember = async (c: Context) => {
         )
 }
 
-
+const logout = async (c: Context) => {
+    deleteCookie(c,'access_token',{
+        httpOnly: true,
+        secure: true,
+        sameSite: 'Strict',
+        path: '/',
+        maxAge: 15 * 60,
+    })
+    deleteCookie(c, 'refresh_token',{
+        httpOnly: true,
+        secure: true,
+        sameSite: 'Strict',
+        path: '/',
+        maxAge: 7 * 24 * 60 * 60,
+    })
+    return c.json({
+        message: 'Logout successfully',
+    }, 200)
+}
 
 export const memberController = {
     register,
     login,
     getMember,
-    googleLogin
+    googleLogin,
+    logout
 };

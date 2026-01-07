@@ -4,6 +4,7 @@ import APIs_V1 from './routes/v1';
 import { connectDB } from './config/db.ts';
 import { cors } from 'hono/cors';
 import { HTTPException } from 'hono/http-exception';
+import { graphQLServer } from './graphql';
 
 const app = new Hono();
 
@@ -21,6 +22,9 @@ app.use(
         credentials: true,
     }),
 );
+
+// Endpoint grapQLAPI
+app.use('/graphql', graphQLServer);
 
 app.route('/v1', APIs_V1);
 

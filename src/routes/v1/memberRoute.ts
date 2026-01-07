@@ -3,7 +3,7 @@ import { registerSchema, loginSchema } from '../../validations/memberValidation.
 import { zValidator } from '@hono/zod-validator';
 import { memberController } from '../../controllers/memberController.ts';
 import { jwt } from 'hono/jwt';
-import { env } from '../../config/enviroment.ts';
+import { env } from '../../config/environment.ts';
 const memberRoute = new Hono();
 
 memberRoute.post('/register', zValidator('json', registerSchema), memberController.register);

@@ -85,6 +85,7 @@ const getMember = async (c: Context) => {
             {
                 id: member._id,
                 username: member.username,
+                displayName: member.displayName,
                 email: member.email,
                 profile: member.profile,
                 workHistory: member.workHistory,

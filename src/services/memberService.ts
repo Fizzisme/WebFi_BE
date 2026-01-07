@@ -4,9 +4,11 @@ import { HTTPException } from 'hono/http-exception';
 import type { ILogin, IRegister,IGoogleLogin } from '../validations/memberValidation';
 import bcrypt from 'bcryptjs';
 import { sign } from 'hono/jwt'
-import {env} from '../config/enviroment.ts';
+import {env} from '../config/environment.ts';
 import {v4 as uuidv4} from "uuid";
-import type {Context} from "hono";
+import { Resend } from 'resend'
+
+const resend = new Resend(env.RESEND_API_KEY)
 
 const register = async (validated: IRegister) => {
     // 1. Kiểm tra logic nghiệp vụ (Email đã tồn tại chưa?)
@@ -26,12 +28,12 @@ const register = async (validated: IRegister) => {
             passwordHash: await bcrypt.hash(validated.password, 10),
         });
 
-        console.log(existingUser)
 
       return await memberModel.update(existingUser._id.toString(),existingUser);
 
     }
     else {
+
         const newUser = {
             ...validated,
             authProvider: [
@@ -45,11 +47,49 @@ const register = async (validated: IRegister) => {
         }
 
         // 2. Gọi Model để lưu vào DB
-        return await memberModel.createNew(newUser);
+        const userCreated = await memberModel.createNew(newUser);
+
+        sendVerificationEmail(userCreated.email,userCreated.verifyToken,userCreated.username)
+        return userCreated
     }
 
 
 };
+
+export async function sendVerificationEmail(
+    email: string,
+    verifyToken: string | null,
+    username: string
+) {
+    const verifyUrl = `http://localhost:3000/verify-account?token=${verifyToken}`
+
+    const { data, error } = await resend.emails.send({
+        from: 'onboarding@resend.dev', // ← Dùng email mặc định này, KHÔNG cần verify
+        to: email, // ← Email thật của user (gmail, outlook, v.v.)
+        subject: 'Verify your account',
+        html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h1>Welcome ${username}!</h1>
+                <p>Click the button below to verify your email:</p>
+                <a href="${verifyUrl}" 
+                   style="display: inline-block; padding: 12px 24px; background-color: #007bff; 
+                          color: white; text-decoration: none; border-radius: 5px;">
+                    Verify Email
+                </a>
+                <p>Or copy this link: ${verifyUrl}</p>
+            </div>
+        `,
+    })
+
+    if (error) {
+        console.error('Resend error:', error)
+        throw new Error('Failed to send email')
+    }
+
+    return data
+}
+
+
 
 const login = async (validated: ILogin) => {
     // 1. Tìm user theo email
@@ -80,6 +120,7 @@ const login = async (validated: ILogin) => {
     const basePayload = {
         id: existUser._id.toString(),
         email: existUser.email,
+        displayName: existUser.displayName,
         username: existUser.username,
         country: existUser.country,
         role: existUser.role
@@ -118,6 +159,7 @@ const googleLogin = async (data : IGoogleLogin) => {
         const newUserData = {
             ...data,
             username: data.name,
+            displayName: data.name,
             profile :
                 {
                     avatar: data.image,
@@ -137,6 +179,7 @@ const googleLogin = async (data : IGoogleLogin) => {
             id: newUser._id.toString(),
             email: newUser.email,
             username: newUser.username,
+            displayName: newUser.displayName,
             country: newUser.country,
             role: newUser.role,
         }
@@ -178,6 +221,7 @@ const googleLogin = async (data : IGoogleLogin) => {
         id: existingUser._id.toString(),
         email: existingUser.email,
         username: existingUser.username,
+        displayName: existingUser.displayName,
         country: existingUser.country,
         role: existingUser.role
     }

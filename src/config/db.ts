@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { env } from './enviroment.ts';
+import { env } from './environment.ts';
 
 const MONGODB_URI = env.MONGODB_URI;
 

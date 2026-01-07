@@ -29,6 +29,7 @@ interface IAuthProvider{
 }
 export interface IMemberDocument extends Document {
     username: string;
+    displayName:  string;
     email: string;
     country: string;
     role: string;
@@ -45,6 +46,7 @@ export interface IMemberDocument extends Document {
 const memberSchema = new Schema<IMemberDocument>(
     {
         username: { type: String, required: true },
+        displayName: { type: String },
         email: { type: String, required: true, unique: true },
         country: { type: String, default: '' },
         role: { type: String, default: MEMBER_ROLES.CLIENT },
@@ -91,7 +93,6 @@ const createNew = async (data: IRegister | IGoogleLogin) => {
 
     return await MemberModel.create(
         data
-
     );
 };
 

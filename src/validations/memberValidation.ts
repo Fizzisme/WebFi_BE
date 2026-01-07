@@ -6,6 +6,10 @@ export const registerSchema = z.object({
         .string()
         .min(3)
         .max(255),
+    displayName: z
+        .string()
+        .min(3)
+        .max(255),
     email: z.string().email(),
     password: z
         .string()

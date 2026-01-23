@@ -61,11 +61,8 @@ const getAll = async () => {
         .lean();
 };
 
-const findByKey = async (key: string) => {
-    return await ProjectSubCategoryModel.findOne({
-        key,
-        _destroy: false,
-    }).lean();
+const findBySlug = async (slug: string) => {
+    return await ProjectSubCategoryModel.findOne({ slug: slug });
 };
 
 const update = async (categoryId: string, data: Partial<IProjectSubCategoryDocument>) => {
@@ -89,7 +86,7 @@ const softDelete = async (categoryId: string) => {
 export const projectSubCategoryModel = {
     createNew,
     getAll,
-    findByKey,
+    findBySlug,
     update,
     softDelete,
     ProjectSubCategoryModel,

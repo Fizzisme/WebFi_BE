@@ -2,9 +2,8 @@
 import { type IProjectSubCategoryDocument, projectSubCategoryModel } from '../models/projectSubCategoryModel';
 import { HTTPException } from 'hono/http-exception';
 import type {
-
     ICreateSubProjectCategoryInput,
-} from '../graphql/typeDefs/projectCategory.type.ts';
+} from '../graphql/typeDefs/subCategory.type.ts';
 
 
 const creatNew = async (input: ICreateSubProjectCategoryInput) => {

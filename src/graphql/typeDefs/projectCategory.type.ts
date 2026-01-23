@@ -9,13 +9,6 @@ export interface ICreateProjectCategoryInput {
     order?: number;
 }
 
-export interface ICreateSubProjectCategoryInput {
-    categoryId: string;
-    title: string;
-    slug?: string;
-    order?: number;
-}
-
 export const projectCategoryTypeDefs = gql`
     type ProjectCategory {
         _id: ID!
@@ -26,24 +19,10 @@ export const projectCategoryTypeDefs = gql`
         order: Int!
         subCategories: [SubCategory!]!
     }
-    type SubCategory {
-        _id: ID!
-        title: String!
-        slug: String!
-        categoryId: String!
-        order: Int!
-    }
 
     type Query {
         projectCategories: [ProjectCategory!]!
         projectCategory(key: String!): ProjectCategory
-    }
-
-    input CreateSubCategoryInput {
-        categoryId: String!
-        title: String!
-        slug: String!
-        order: Int!
     }
 
     input CreateProjectCategoryInput {
@@ -56,6 +35,5 @@ export const projectCategoryTypeDefs = gql`
 
     type Mutation {
         createProjectCategory(input: CreateProjectCategoryInput!): ProjectCategory!
-        createProjectSubCategory(input: CreateSubCategoryInput!): SubCategory!
     }
 `;
